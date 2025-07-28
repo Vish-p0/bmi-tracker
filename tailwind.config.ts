@@ -56,28 +56,29 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				// Futuristic custom colors
-				neon: {
-					blue: 'hsl(var(--neon-blue))',
-					electric: 'hsl(var(--electric))',
+				// Soft professional colors
+				soft: {
+					blue: 'hsl(var(--soft-blue))',
 				},
-				cyber: {
-					blue: 'hsl(var(--cyber-blue))',
+				light: {
+					blue: 'hsl(var(--light-blue))',
 				},
-				space: {
-					deep: 'hsl(var(--deep-space))',
-					glass: 'hsl(var(--glass))',
+				navy: 'hsl(var(--navy))',
+				gray: {
+					50: 'hsl(var(--gray-50))',
+					100: 'hsl(var(--gray-100))',
+					200: 'hsl(var(--gray-200))',
 				}
 			},
 			backgroundImage: {
 				'gradient-primary': 'var(--gradient-primary)',
-				'gradient-glass': 'var(--gradient-glass)',
-				'gradient-neon': 'var(--gradient-neon)',
+				'gradient-soft': 'var(--gradient-soft)',
+				'gradient-card': 'var(--gradient-card)',
 			},
 			boxShadow: {
-				'glow': 'var(--shadow-glow)',
-				'neon': 'var(--shadow-neon)',
-				'deep': 'var(--shadow-deep)',
+				'soft': 'var(--shadow-soft)',
+				'medium': 'var(--shadow-medium)',
+				'large': 'var(--shadow-large)',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
@@ -105,17 +106,17 @@ export default {
 					'0%': { transform: 'scale(0.9)', opacity: '0' },
 					'100%': { transform: 'scale(1)', opacity: '1' }
 				},
-				'glow': {
-					'0%, 100%': { boxShadow: '0 0 20px hsl(195 100% 50% / 0.3)' },
-					'50%': { boxShadow: '0 0 30px hsl(193 100% 60% / 0.6)' }
+				'soft-glow': {
+					'0%, 100%': { boxShadow: 'var(--shadow-medium)' },
+					'50%': { boxShadow: 'var(--shadow-large)' }
 				},
-				'float': {
+				'gentle-float': {
 					'0%, 100%': { transform: 'translateY(0px)' },
-					'50%': { transform: 'translateY(-10px)' }
+					'50%': { transform: 'translateY(-5px)' }
 				},
-				'pulse-slow': {
+				'pulse-gentle': {
 					'0%, 100%': { opacity: '1' },
-					'50%': { opacity: '0.7' }
+					'50%': { opacity: '0.8' }
 				}
 			},
 			animation: {
@@ -124,9 +125,9 @@ export default {
 				'fade-in': 'fade-in 0.6s ease-out',
 				'slide-in-right': 'slide-in-right 0.5s ease-out',
 				'scale-in': 'scale-in 0.4s ease-out',
-				'glow': 'glow 2s ease-in-out infinite',
-				'float': 'float 6s ease-in-out infinite',
-				'pulse-slow': 'pulse-slow 3s ease-in-out infinite'
+				'soft-glow': 'soft-glow 3s ease-in-out infinite',
+				'gentle-float': 'gentle-float 4s ease-in-out infinite',
+				'pulse-gentle': 'pulse-gentle 2s ease-in-out infinite'
 			}
 		}
 	},

@@ -19,23 +19,21 @@ export const BMIGauge: React.FC<BMIGaugeProps> = ({ value }) => {
 
   // Calculate the position of the needle based on BMI value
   const calculateNeedleRotation = (bmi: number): number => {
-    // BMI ranges: 0-15 (underweight), 15-18.5 (underweight), 18.5-25 (normal), 25-30 (overweight), 30+ (obese)
-    // Map to 180 degrees (semicircle)
-    let rotation: number;
+    // BMI ranges mapped to semicircle (180 degrees)
+    // Underweight: 0-18.5 (0-54 degrees)
+    // Normal: 18.5-25 (54-108 degrees)  
+    // Overweight: 25-30 (108-144 degrees)
+    // Obese: 30+ (144-180 degrees)
     
-    if (bmi <= 15) {
-      rotation = (bmi / 15) * 36; // 0-36 degrees
-    } else if (bmi <= 18.5) {
-      rotation = 36 + ((bmi - 15) / 3.5) * 36; // 36-72 degrees
+    if (bmi <= 18.5) {
+      return (bmi / 18.5) * 54; // 0-54 degrees
     } else if (bmi <= 25) {
-      rotation = 72 + ((bmi - 18.5) / 6.5) * 36; // 72-108 degrees
+      return 54 + ((bmi - 18.5) / 6.5) * 54; // 54-108 degrees
     } else if (bmi <= 30) {
-      rotation = 108 + ((bmi - 25) / 5) * 36; // 108-144 degrees
+      return 108 + ((bmi - 25) / 5) * 36; // 108-144 degrees
     } else {
-      rotation = 144 + Math.min((bmi - 30) / 10, 1) * 36; // 144-180 degrees
+      return 144 + Math.min((bmi - 30) / 10, 1) * 36; // 144-180 degrees
     }
-    
-    return rotation;
   };
 
   const needleRotation = calculateNeedleRotation(value);
@@ -44,22 +42,22 @@ export const BMIGauge: React.FC<BMIGaugeProps> = ({ value }) => {
     labels: ['Underweight', 'Normal', 'Overweight', 'Obese', 'Hidden'],
     datasets: [
       {
-        data: [20, 25, 25, 25, 5], // Hidden section to create half-circle effect
+        data: [18.5, 6.5, 5, 10, 10], // Proportional to actual BMI ranges + hidden section
         backgroundColor: [
-          '#3b82f6', // Blue
-          '#22c55e', // Green
-          '#f59e0b', // Yellow
-          '#ef4444', // Red
+          'hsl(207 90% 54%)', // Soft blue
+          'hsl(142 76% 36%)', // Soft green
+          'hsl(38 92% 50%)', // Soft orange
+          'hsl(0 84% 60%)', // Soft red
           'transparent', // Hidden section
         ],
         borderColor: [
-          '#1d4ed8',
-          '#16a34a',
-          '#d97706',
-          '#dc2626',
+          'hsl(207 90% 54%)',
+          'hsl(142 76% 36%)',
+          'hsl(38 92% 50%)',
+          'hsl(0 84% 60%)',
           'transparent',
         ],
-        borderWidth: 2,
+        borderWidth: 1,
         circumference: 180,
         rotation: 270,
       },
@@ -107,29 +105,29 @@ export const BMIGauge: React.FC<BMIGaugeProps> = ({ value }) => {
         ctx.save();
         
         // Draw needle
-        ctx.strokeStyle = '#00d4ff';
-        ctx.lineWidth = 4;
+        ctx.strokeStyle = 'hsl(207 90% 54%)';
+        ctx.lineWidth = 3;
         ctx.lineCap = 'round';
         
         ctx.beginPath();
         ctx.moveTo(centerX, centerY);
         ctx.lineTo(
-          centerX + Math.cos(angle) * (radius - 30),
-          centerY + Math.sin(angle) * (radius - 30)
+          centerX + Math.cos(angle) * (radius - 25),
+          centerY + Math.sin(angle) * (radius - 25)
         );
         ctx.stroke();
         
         // Draw center dot
-        ctx.fillStyle = '#00d4ff';
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
-        ctx.fill();
-        
-        // Add glow effect
-        ctx.shadowColor = '#00d4ff';
-        ctx.shadowBlur = 10;
+        ctx.fillStyle = 'hsl(207 90% 54%)';
         ctx.beginPath();
         ctx.arc(centerX, centerY, 6, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        // Add subtle shadow
+        ctx.shadowColor = 'hsl(207 90% 54% / 0.3)';
+        ctx.shadowBlur = 4;
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, 4, 0, 2 * Math.PI);
         ctx.fill();
         
         ctx.restore();
@@ -146,20 +144,20 @@ export const BMIGauge: React.FC<BMIGaugeProps> = ({ value }) => {
       </div>
       
       {/* BMI Scale Labels */}
-      <div className="absolute bottom-0 left-0 right-0 flex justify-between px-4 text-xs font-medium">
-        <span className="text-blue-400">15</span>
-        <span className="text-blue-400">18.5</span>
-        <span className="text-green-400">25</span>
-        <span className="text-yellow-400">30</span>
-        <span className="text-red-400">35+</span>
+      <div className="absolute bottom-0 left-0 right-0 flex justify-between px-4 text-xs font-medium text-muted-foreground">
+        <span>15</span>
+        <span>18.5</span>
+        <span>25</span>
+        <span>30</span>
+        <span>35+</span>
       </div>
       
       {/* Current Value Display */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
-        <div className="text-2xl font-orbitron font-bold text-primary animate-pulse-slow">
+        <div className="text-3xl font-semibold text-primary animate-pulse-gentle">
           {value}
         </div>
-        <div className="text-xs text-muted-foreground">BMI</div>
+        <div className="text-xs text-muted-foreground font-medium">BMI</div>
       </div>
     </div>
   );

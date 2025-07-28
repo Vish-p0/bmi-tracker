@@ -29,25 +29,25 @@ export const BMIChart: React.FC<BMIChartProps> = ({ currentBMI }) => {
   const chartRef = useRef<ChartJS<'bar'>>(null);
 
   const data = {
-    labels: ['Underweight', 'Normal', 'Overweight', 'Obese'],
+    labels: ['Underweight\n< 18.5', 'Normal\n18.5-24.9', 'Overweight\n25-29.9', 'Obese\n≥ 30'],
     datasets: [
       {
-        label: 'BMI Range',
-        data: [18.5, 24.9, 29.9, 40],
+        label: 'BMI Upper Limit',
+        data: [18.5, 24.9, 29.9, 35],
         backgroundColor: [
-          'rgba(59, 130, 246, 0.6)', // Blue for underweight
-          'rgba(34, 197, 94, 0.6)',  // Green for normal
-          'rgba(245, 158, 11, 0.6)', // Yellow for overweight
-          'rgba(239, 68, 68, 0.6)',  // Red for obese
+          'hsl(207 90% 54% / 0.8)', // Soft blue
+          'hsl(142 76% 36% / 0.8)', // Soft green
+          'hsl(38 92% 50% / 0.8)',  // Soft orange
+          'hsl(0 84% 60% / 0.8)',   // Soft red
         ],
         borderColor: [
-          'rgb(59, 130, 246)',
-          'rgb(34, 197, 94)',
-          'rgb(245, 158, 11)',
-          'rgb(239, 68, 68)',
+          'hsl(207 90% 54%)',
+          'hsl(142 76% 36%)',
+          'hsl(38 92% 50%)',
+          'hsl(0 84% 60%)',
         ],
-        borderWidth: 2,
-        borderRadius: 8,
+        borderWidth: 1,
+        borderRadius: 6,
       },
     ],
   };
@@ -61,30 +61,27 @@ export const BMIChart: React.FC<BMIChartProps> = ({ currentBMI }) => {
       },
       title: {
         display: true,
-        text: 'BMI Categories',
-        color: '#00d4ff',
+        text: 'BMI Categories & Ranges',
+        color: 'hsl(var(--foreground))',
         font: {
-          family: 'Orbitron',
-          size: 18,
+          family: 'system-ui',
+          size: 16,
           weight: 'bold',
         },
       },
       tooltip: {
-        backgroundColor: 'rgba(30, 41, 59, 0.9)',
-        titleColor: '#00d4ff',
-        bodyColor: '#e2e8f0',
-        borderColor: '#00d4ff',
+        backgroundColor: 'hsl(var(--popover))',
+        titleColor: 'hsl(var(--popover-foreground))',
+        bodyColor: 'hsl(var(--popover-foreground))',
+        borderColor: 'hsl(var(--border))',
         borderWidth: 1,
         cornerRadius: 8,
+        displayColors: true,
         callbacks: {
           label: function(context) {
-            const ranges = [
-              'BMI < 18.5',
-              'BMI 18.5-24.9',
-              'BMI 25-29.9',
-              'BMI ≥ 30'
-            ];
-            return ranges[context.dataIndex];
+            const value = context.parsed.y;
+            const category = context.label.split('\n')[0];
+            return `${category}: Up to ${value}`;
           },
         },
       },
@@ -92,15 +89,23 @@ export const BMIChart: React.FC<BMIChartProps> = ({ currentBMI }) => {
     scales: {
       y: {
         beginAtZero: true,
-        max: 45,
+        max: 40,
         grid: {
-          color: 'rgba(148, 163, 184, 0.1)',
+          color: 'hsl(var(--border))',
         },
         ticks: {
-          color: '#94a3b8',
+          color: 'hsl(var(--muted-foreground))',
           font: {
-            family: 'Exo 2',
+            family: 'system-ui',
           },
+          callback: function(value) {
+            return value + ' BMI';
+          },
+        },
+        title: {
+          display: true,
+          text: 'BMI Value',
+          color: 'hsl(var(--muted-foreground))',
         },
       },
       x: {
@@ -108,11 +113,12 @@ export const BMIChart: React.FC<BMIChartProps> = ({ currentBMI }) => {
           display: false,
         },
         ticks: {
-          color: '#94a3b8',
+          color: 'hsl(var(--muted-foreground))',
           font: {
-            family: 'Exo 2',
-            weight: 'bold',
+            family: 'system-ui',
+            weight: 'normal',
           },
+          maxRotation: 0,
         },
       },
     },
@@ -141,19 +147,28 @@ export const BMIChart: React.FC<BMIChartProps> = ({ currentBMI }) => {
         
         if (yPosition >= chartArea.top && yPosition <= chartArea.bottom) {
           ctx.save();
-          ctx.strokeStyle = '#00d4ff';
-          ctx.lineWidth = 3;
-          ctx.setLineDash([5, 5]);
+          ctx.strokeStyle = 'hsl(var(--primary))';
+          ctx.lineWidth = 2;
+          ctx.setLineDash([8, 4]);
           
           ctx.beginPath();
           ctx.moveTo(chartArea.left, yPosition);
           ctx.lineTo(chartArea.right, yPosition);
           ctx.stroke();
           
-          // Add label
-          ctx.fillStyle = '#00d4ff';
-          ctx.font = 'bold 12px Orbitron';
-          ctx.fillText(`Your BMI: ${currentBMI}`, chartArea.left + 10, yPosition - 10);
+          // Add label with background
+          ctx.fillStyle = 'hsl(var(--primary))';
+          ctx.font = '600 11px system-ui';
+          const text = `Your BMI: ${currentBMI}`;
+          const textWidth = ctx.measureText(text).width;
+          
+          // Background for text
+          ctx.fillStyle = 'hsl(var(--background))';
+          ctx.fillRect(chartArea.left + 8, yPosition - 20, textWidth + 8, 16);
+          
+          // Text
+          ctx.fillStyle = 'hsl(var(--primary))';
+          ctx.fillText(text, chartArea.left + 12, yPosition - 8);
           
           ctx.restore();
         }
@@ -162,10 +177,10 @@ export const BMIChart: React.FC<BMIChartProps> = ({ currentBMI }) => {
   }, [currentBMI]);
 
   return (
-    <Card className="glass-card neon-glow animate-scale-in">
+    <Card className="soft-card animate-scale-in">
       <div className="space-y-4">
         <div className="text-center">
-          <h3 className="text-xl font-orbitron font-semibold text-primary">
+          <h3 className="text-xl font-semibold text-foreground">
             BMI Reference Chart
           </h3>
           <p className="text-sm text-muted-foreground">
@@ -177,25 +192,25 @@ export const BMIChart: React.FC<BMIChartProps> = ({ currentBMI }) => {
           <Bar ref={chartRef} data={data} options={options} />
         </div>
         
-        <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="grid grid-cols-2 gap-3 text-sm">
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-blue-500 rounded"></div>
-              <span>Underweight: &lt; 18.5</span>
+              <div className="w-3 h-3 rounded" style={{backgroundColor: 'hsl(207 90% 54%)'}}></div>
+              <span className="text-foreground">Underweight: &lt; 18.5</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-green-500 rounded"></div>
-              <span>Normal: 18.5-24.9</span>
+              <div className="w-3 h-3 rounded" style={{backgroundColor: 'hsl(142 76% 36%)'}}></div>
+              <span className="text-foreground">Normal: 18.5-24.9</span>
             </div>
           </div>
           <div className="space-y-2">
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-yellow-500 rounded"></div>
-              <span>Overweight: 25-29.9</span>
+              <div className="w-3 h-3 rounded" style={{backgroundColor: 'hsl(38 92% 50%)'}}></div>
+              <span className="text-foreground">Overweight: 25-29.9</span>
             </div>
             <div className="flex items-center space-x-2">
-              <div className="w-3 h-3 bg-red-500 rounded"></div>
-              <span>Obese: ≥ 30</span>
+              <div className="w-3 h-3 rounded" style={{backgroundColor: 'hsl(0 84% 60%)'}}></div>
+              <span className="text-foreground">Obese: ≥ 30</span>
             </div>
           </div>
         </div>
